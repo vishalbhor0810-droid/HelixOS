@@ -1,0 +1,157 @@
+import os
+import json
+import logging
+from typing import List, Dict, Any, Optional
+import httpx
+from backend.config import settings
+
+logger = logging.getLogger("helix.llm")
+
+
+class LLMClient:
+    def __init__(self):
+        self._groq_client = None
+        self._last_key = None
+
+    @property
+    def provider(self) -> str:
+        return settings.LLM_PROVIDER
+
+    @property
+    def api_key(self) -> str:
+        return settings.LLM_API_KEY
+
+    @property
+    def model(self) -> str:
+        return settings.LLM_MODEL
+
+    @property
+    def base_url(self) -> str:
+        return settings.LLM_BASE_URL
+
+    def is_configured(self) -> bool:
+        key = self.api_key
+        return bool(key and key != "your_api_key_here")
+
+    def _get_groq_client(self):
+        current_key = self.api_key
+        if self._groq_client is None or self._last_key != current_key:
+            from groq import Groq
+            self._groq_client = Groq(api_key=current_key)
+            self._last_key = current_key
+        return self._groq_client
+
+    async def generate_response(
+        self,
+        system_prompt: str,
+        user_message: str,
+        conversation_history: Optional[List[Dict[str, str]]] = None,
+        temperature: float = 0.2
+    ) -> str:
+        """
+        Generate completion using configured LLM provider.
+        """
+        if not self.is_configured():
+            return (
+                "⚠️ **LLM API Key Not Configured**\n\n"
+                "I have retrieved the relevant document context from your workspace below, but no external LLM API key was detected.\n\n"
+                "To enable intelligent AI synthesis, please add your `LLM_API_KEY` in your `.env` file (e.g. Groq, Gemini, or OpenAI)."
+            )
+
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        if conversation_history:
+            for msg in conversation_history[-6:]:
+                role = msg.get("role", "user")
+                if role in ("user", "assistant"):
+                    messages.append({"role": role, "content": msg.get("content", "")})
+                    
+        messages.append({"role": "user", "content": user_message})
+
+        try:
+            if self.provider == "groq":
+                return await self._call_groq(messages, temperature)
+            elif self.provider == "gemini":
+                return await self._call_gemini(system_prompt, messages, temperature)
+            elif self.provider in ("openai", "ollama", "custom"):
+                return await self._call_openai_compatible(messages, temperature)
+            else:
+                return await self._call_groq(messages, temperature)
+        except Exception as e:
+            logger.error(f"LLM generation failed: {e}", exc_info=True)
+            return f"❌ **Error communicating with AI Provider ({self.provider})**: {str(e)}"
+
+    async def _call_groq(self, messages: List[Dict[str, str]], temperature: float) -> str:
+        client = self._get_groq_client()
+        import asyncio
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(
+            None,
+            lambda: client.chat.completions.create(
+                model=self.model or "llama-3.3-70b-versatile",
+                messages=messages,
+                temperature=temperature,
+                max_tokens=1500
+            )
+        )
+        return response.choices[0].message.content
+
+    async def _call_gemini(self, system_prompt: str, messages: List[Dict[str, str]], temperature: float) -> str:
+        model_name = (self.model or "gemini-1.5-flash").strip()
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
+        headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": self.api_key
+        }
+        
+        contents = []
+        for m in messages:
+            if m["role"] == "system":
+                continue
+            role = "user" if m["role"] == "user" else "model"
+            contents.append({
+                "role": role,
+                "parts": [{"text": m["content"]}]
+            })
+            
+        payload = {
+            "contents": contents,
+            "systemInstruction": {
+                "parts": [{"text": system_prompt}]
+            },
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": 1500
+            }
+        }
+        
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+            candidates = data.get("candidates", [])
+            if candidates and candidates[0].get("content", {}).get("parts"):
+                return candidates[0]["content"]["parts"][0]["text"]
+            return "No response generated by Gemini."
+
+    async def _call_openai_compatible(self, messages: List[Dict[str, str]], temperature: float) -> str:
+        base_url = self.base_url or "https://api.openai.com/v1"
+        url = f"{base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        payload = {
+            "model": self.model or "gpt-4o-mini",
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": 1500
+        }
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+            return data["choices"][0]["message"]["content"]
+
+
+llm_client = LLMClient()

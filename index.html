@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>HelixOS - AI Desktop Agent</title>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-badge">⚡</div>
+                <h1>HELIX<span>OS</span></h1>
+            </div>
+            <div class="header-status">
+                <span id="backend-status-indicator" class="status-pill status-connecting">
+                    <span class="status-dot"></span>
+                    <span id="backend-status-text">Connecting to AI Engine...</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Workspace Container -->
+        <div class="container">
+            <!-- Sidebar Navigation & Controls -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <span class="section-title">Navigation</span>
+                    <button id="dashboard-btn" class="nav-btn active">📊 Dashboard</button>
+                    <button id="files-btn" class="nav-btn">📁 Files</button>
+                    <button id="search-btn" class="nav-btn">🔍 Search</button>
+                    <button id="settings-btn" class="nav-btn">⚙️ Settings</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <span class="section-title">Workspace Actions</span>
+                    <button id="select-folder-btn" class="action-btn">📂 Select Folder</button>
+                    <button id="show-files-btn" class="action-btn">📄 Show Files</button>
+                    <button id="organize-btn" class="action-btn">🗂️ Organize</button>
+                    <button id="monitor-btn" class="action-btn">👁️ Monitor Folder</button>
+                </div>
+
+                <div class="folder-badge">
+                    <span class="folder-label">Selected Directory:</span>
+                    <p id="selected-folder">No folder selected</p>
+                </div>
+            </aside>
+           
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <div class="workspace-panel">
+                    <div class="workspace-header">
+                        <h2>Workspace Activity</h2>
+                        <p class="subtitle">Document Intelligence & Real-Time Monitoring</p>
+                    </div>
+
+                    <div class="panel-grid">
+                        <div class="panel-card file-panel">
+                            <div class="panel-card-header">
+                                <h3>Directory Contents</h3>
+                                <span class="panel-tag">Files</span>
+                            </div>
+                            <div id="file-list" class="file-list-box">Select a folder and click "Show Files" to inspect contents.</div>
+                        </div>
+
+                        <div class="panel-card notif-panel">
+                            <div class="panel-card-header">
+                                <h3>Live Event Feed</h3>
+                                <span class="panel-tag">Watcher & Indexer</span>
+                            </div>
+                            <div id="notifications" class="notifications-box"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Helix AI Chat Interface (Bottom Dock) -->
+        <section class="chat-section">
+            <div class="chat-header">
+                <div class="chat-title-group">
+                    <div class="ai-avatar">🤖</div>
+                    <div>
+                        <h3>Chat with Helix</h3>
+                        <p class="chat-subtitle">Ask questions about your documents or retrieve files semantically</p>
+                    </div>
+                </div>
+                <div class="chat-controls">
+                    <button id="clear-chat-btn" class="icon-btn" title="Clear Chat History">🗑️ Clear</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Message Feed -->
+            <div id="chat-history" class="chat-history">
+                <div class="chat-message assistant-message intro-message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-author">Helix AI</div>
+                        <p>Hello! I am your <strong>HelixOS</strong> document companion. I can help you locate documents, understand their content, and answer complex questions using local semantic retrieval.</p>
+                        <div class="suggestion-chips">
+                            <button class="chip" data-prompt="Help me find my PDF which contains semester questions.">🔍 Find semester questions PDF</button>
+                            <button class="chip" data-prompt="What documents are currently indexed?">📚 List indexed documents</button>
+                            <button class="chip" data-prompt="Summarize the files in my monitored workspace.">📝 Summarize workspace</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading / Thinking Indicator -->
+            <div id="chat-loading" class="chat-loading hidden">
+                <div class="spinner"></div>
+                <span>Helix is searching documents and generating response...</span>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="chat-input-bar">
+                <input 
+                    type="text" 
+                    id="chat-input" 
+                    placeholder="Ask Helix anything (e.g. 'Help me find my PDF containing semester questions')..." 
+                    autocomplete="off"
+                />
+                <button id="chat-send-btn" class="send-btn">
+                    <span>Send</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
