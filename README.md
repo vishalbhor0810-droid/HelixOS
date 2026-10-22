@@ -4,6 +4,10 @@ HelixOS is a desktop application that lets you **search, ask questions about, an
 
 Point it at a folder and HelixOS keeps a live, searchable index of everything inside it: PDFs, Word, Excel, PowerPoint, text files and images, including **scanned and handwritten pages**. You can then chat with your files, find documents by describing them, and ask Helix to organize or convert files. Every file change is confirmed by you before it happens.
 
+## Demo
+
+<img width="900" alt="HelixOS demo: asking a question about local documents and opening the source file" src="https://github.com/user-attachments/assets/b863be60-443e-4840-aab2-dd7731466735" />
+
 ## Key Features
 
 - **Chat with your documents**: RAG answers grounded in your own files, with sources, confidence levels and a one-click "Open file" action
