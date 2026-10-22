@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>HelixOS - AI Desktop Agent</title>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h1>HELIX<span>OS</span></h1>
+            </div>
+            <div class="header-status">
+                <span id="backend-status-indicator" class="status-pill status-connecting">
+                    <span class="status-dot"></span>
+                    <span id="backend-status-text">Starting AI Engine...</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Workspace Container -->
+        <div class="container">
+            <!-- Sidebar Navigation & Controls -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <span class="section-title">Navigation</span>
+                    <button id="dashboard-btn" class="nav-btn active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                        Dashboard
+                    </button>
+                    <button id="files-btn" class="nav-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                        Files
+                    </button>
+                    <button id="search-btn" class="nav-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        Search
+                    </button>
+                    <button id="settings-btn" class="nav-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+                        Settings
+                    </button>
+                </div>
+
+                <div class="sidebar-section">
+                    <span class="section-title">Workspace</span>
+                    <button id="select-folder-btn" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+                        Select Folder
+                    </button>
+                    <button id="show-files-btn" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                        Show Files
+                    </button>
+                    <button id="organize-btn" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>
+                        Organize
+                    </button>
+                    <button id="monitor-btn" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Monitor Folder
+                    </button>
+                </div>
+
+                <div id="folder-badge" class="folder-badge">
+                    <span class="folder-label">
+                        Current folder
+                        <span class="watching-tag">Watching</span>
+                    </span>
+                    <p id="selected-folder">No folder selected</p>
+                </div>
+            </aside>
+
+            <!-- Helix AI Chat (primary area) -->
+            <main class="chat-section">
+                <div class="chat-header">
+                    <div class="chat-title-group">
+                        <h2>Chat with Helix</h2>
+                        <p class="chat-subtitle">Ask questions about your documents or retrieve files semantically</p>
+                    </div>
+                    <div class="chat-controls">
+                        <button id="clear-chat-btn" class="icon-btn" title="Clear Chat History">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Message Feed -->
+                <div id="chat-history" class="chat-history">
+                    <div class="welcome">
+                        <div class="welcome-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.6 5.6 1.9-5.6 1.9L12 18l-1.9-5.6-5.6-1.9 5.6-1.9Z"/><path d="M19 3v4"/><path d="M21 5h-4"/></svg>
+                        </div>
+                        <h3>What are you looking for?</h3>
+                        <p>Ask in plain English. Helix searches the content of your PDFs, Office files, notes and scans, and shows you where each answer came from.</p>
+                        <div class="suggestion-chips">
+                            <button class="chip" data-prompt="Help me find my PDF which contains semester questions.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                                <span><strong>Find a document</strong>My PDF with semester questions</span>
+                            </button>
+                            <button class="chip" data-prompt="What documents are currently indexed?">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+                                <span><strong>List documents</strong>What's currently indexed</span>
+                            </button>
+                            <button class="chip" data-prompt="Summarize the files in my monitored workspace.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                                <span><strong>Summarize</strong>The files in my workspace</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading / Thinking Indicator -->
+                <div id="chat-loading" class="chat-loading hidden">
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
+                    <span>Searching your documents...</span>
+                </div>
+
+                <!-- Input Bar -->
+                <div class="chat-input-bar">
+                    <div class="chat-input-wrap">
+                        <input
+                            type="text"
+                            id="chat-input"
+                            placeholder="Ask Helix anything, e.g. 'Find my PDF with semester questions'"
+                            autocomplete="off"
+                        />
+                        <button id="chat-send-btn" class="send-btn" title="Send">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="input-hint">Press Enter to send · Answers come from your indexed files</p>
+                </div>
+            </main>
+
+            <!-- Activity Rail: folder contents + live events -->
+            <aside class="activity-rail">
+                <div class="panel-card file-panel">
+                    <div class="panel-card-header">
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                            Folder Contents
+                        </h3>
+                        <span class="panel-tag">Files</span>
+                    </div>
+                    <div id="file-actions" class="file-actions hidden">
+                        <div class="file-actions-row">
+                            <label class="select-all-label">
+                                <input type="checkbox" id="select-all-files">
+                                <span id="selected-count">0 selected</span>
+                            </label>
+                            <input type="text" id="target-folder-input" class="target-folder-input" placeholder="Folder name, e.g. Major" maxlength="100">
+                        </div>
+                        <div class="file-actions-row">
+                            <button id="move-selected-btn" class="file-op-btn file-op-confirm" disabled>Move</button>
+                            <button id="copy-selected-btn" class="file-op-btn file-op-cancel" disabled>Copy</button>
+                        </div>
+                        <div id="file-op-confirm-bar" class="file-actions-row file-op-confirm-bar hidden">
+                            <span id="file-op-confirm-text"></span>
+                            <button id="file-op-confirm-btn" class="file-op-btn file-op-confirm">Confirm</button>
+                            <button id="file-op-cancel-btn" class="file-op-btn file-op-cancel">Cancel</button>
+                        </div>
+                    </div>
+                    <div id="file-list" class="file-list-box">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+                            <p>No folder open yet</p>
+                            <button class="empty-action" data-click="select-folder-btn">Choose a folder</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card notif-panel">
+                    <div class="panel-card-header">
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                            Live Activity
+                        </h3>
+                        <span class="panel-tag">Watcher &amp; Indexer</span>
+                    </div>
+                    <div id="notifications" class="notifications-box"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
